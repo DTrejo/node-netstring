@@ -9,13 +9,13 @@
   "repositories" : [
     {
       "type" : "git",
-      "url" : "http://github.com/pgriess/node-netstring"
+      "url" : "http://github.com/josh/node-netstring"
     }
   ],
   "licenses" : [
     {
       "type" : "BSD",
-      "url" : "http://github.com/pgriess/node-netstring/blob/master/LICENSE"
+      "url" : "http://github.com/josh/node-netstring/blob/master/LICENSE"
     }
   ],
   "main" : "./lib/ns.js"
