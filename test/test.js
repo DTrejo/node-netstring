@@ -40,6 +40,11 @@ var ns = require('../lib/ns');
         'offset' : function(as) {
             as.equal(ns.nsPayloadLength('xxx30', 3), -1);
             as.equal(ns.nsPayloadLength('xxx30:', 3), 30);
+        },
+        'encoding' : function(as) {
+            as.equal(ns.nsPayloadLength('30:', 0, 'utf8'), 30);
+            as.equal(ns.nsPayloadLength(new Buffer('30:', 'utf8'), 0), 30);
+            as.equal(ns.nsPayloadLength(new Buffer([0x33, 0x30, 0x3a, 0x0], 'binary'), 0), 30);
         }
     });
 
@@ -59,6 +64,11 @@ var ns = require('../lib/ns');
             as.equal(ns.nsLength(''), -1);
             as.equal(ns.nsLength('30'), -1);
         },
+        'encoding' : function(as) {
+            as.equal(ns.nsLength('1:q,', 0, 'utf8'), 4);
+            as.equal(ns.nsLength(new Buffer('1:q,', 0, 'utf8')), 4);
+            as.equal(ns.nsLength(new Buffer([0x33, 0x30, 0x3a, 0x0], 'binary'), 0), 34);
+        }
     });
 
     ts.runTests();
@@ -95,9 +105,14 @@ var ns = require('../lib/ns');
             as.equal(ns.nsPayload('3:abc'), -1);
         },
         'utf8' : function(as) {
-          as.equal(ns.nsPayload('3:☃,'), '☃');
-          as.equal(ns.nsPayload(new Buffer('3:☃,')), '☃');
-        }
+            as.equal(ns.nsPayload('3:☃,'), '☃');
+            as.equal(ns.nsPayload(new Buffer('3:☃,')), '☃');
+        },
+        'encoding' : function(as) {
+            as.equal(ns.nsPayload('3:☃,', 0, 'utf8'), '☃');
+            as.equal(ns.nsPayload(new Buffer('3:☃,', 'utf8'), 0), '☃');
+            as.equal(ns.nsPayload(new Buffer([0x33, 0x3a, 0x61, 0x62, 0x63, 0x2c], 'binary'), 0), 'abc');
+         }
     });
 
     ts.runTests();
@@ -162,6 +177,11 @@ var ns = require('../lib/ns');
             beq(as, 'abc', 0, 3, 3, 0);
             beq(as, 'abc', 0, 1, 3, 0);
             beq(as, 'abc', 0, 3, 10, 1);
+        },
+        'encoding' : function(as) {
+            as.equal(ns.nsWrite('☃', 0, 3, null, 0, 'utf8'), '3:☃,');
+            as.equal(ns.nsWrite(new Buffer('☃', 'utf8'), 0, 3, null, 0), '3:☃,');
+            as.equal(ns.nsWrite(new Buffer([0x61, 0x62, 0x63], 'binary'), 0), '3:abc,');
         }
     });
 
@@ -187,6 +207,7 @@ var ns = require('../lib/ns');
 
             var msgsReceived = 0;
             ins.addListener('data', function(d) {
+                as.equal('object', typeof d);
                 as.equal(d.toString(), MSGS[msgsReceived]);
                 msgsReceived++;
             });
@@ -196,6 +217,27 @@ var ns = require('../lib/ns');
             is.emit('data', new Buffer(" world!,"));
             is.emit('data', new Buffer("5:café,"));
             is.emit('data', new Buffer("1:a,1:b,1:c,"));
+        },
+        'set encoding' : function(as) {
+            var is  = new events.EventEmitter();
+            var ins = new ns.Stream(is);
+            ins.setEncoding('utf8');
+
+            var MSGS = [
+                "a",
+                "b",
+                "c"
+            ];
+
+            var msgsReceived = 0;
+            ins.addListener('data', function(d) {
+                as.equal('string', typeof d);
+                as.equal(d, MSGS[msgsReceived]);
+                msgsReceived++;
+            });
+
+            is.emit('data', new Buffer("1:a,1:b,"));
+            is.emit('data', new Buffer("1:c,"));
         }
     });
 
