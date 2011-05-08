@@ -18,5 +18,8 @@
       "url" : "http://github.com/josh/node-netstring/blob/master/LICENSE"
     }
   ],
-  "main" : "./lib/ns.js"
+  "main" : "./lib/ns.js",
+  "scripts" : {
+    "test" : "node test/test.js"
+  }
 }
