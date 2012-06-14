@@ -42,3 +42,37 @@ Get the length of the netstring pointed to by the given `buf` object at
 offset `off`. Despite its name, `buf`, can be either a string or a `Buffer`.
 The length returned includes the length of the header and footer in addition
 to the payload. Negative values follow the taxonomy from `nsPayloadLength()`.
+
+### Stream
+You can also stream data:
+
+```js
+    var as = require('assert');
+    var is  = new events.EventEmitter();
+    var ins = new ns.Stream(is);
+
+    // optionally set the encoding:
+    // ins.setEncoding('utf8');
+
+    var MSGS = [
+      "abc",
+      "hello world!",
+      "café",
+      "a",
+      "b",
+      "c"
+    ];
+
+    var msgsReceived = 0;
+    ins.addListener('data', function(d) {
+      as.equal('object', typeof d);
+      as.equal(d.toString(), MSGS[msgsReceived]);
+      msgsReceived++;
+    });
+
+    is.emit('data', new Buffer("3:abc,"));
+    is.emit('data', new Buffer("12:hello"));
+    is.emit('data', new Buffer(" world!,"));
+    is.emit('data', new Buffer("5:café,"));
+    is.emit('data', new Buffer("1:a,1:b,1:c,"));
+```
