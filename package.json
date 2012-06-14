@@ -1,25 +1,28 @@
 {
-  "name" : "netstring",
-  "version" : "0.2.0",
-  "description" : "A netstring implementation",
-  "author" : "Peter Griess <pg@std.in>",
-  "engines" : {
-    "node" : ">=0.2"
+  "name": "netstring",
+  "version": "0.2.0",
+  "description": "A netstring implementation",
+  "author": "Peter Griess <pg@std.in>",
+  "engines": {
+    "node": ">=0.2"
   },
-  "repositories" : [
+  "repositories": [
     {
-      "type" : "git",
-      "url" : "http://github.com/josh/node-netstring"
+      "type": "git",
+      "url": "http://github.com/josh/node-netstring"
     }
   ],
-  "licenses" : [
+  "licenses": [
     {
-      "type" : "BSD",
-      "url" : "http://github.com/josh/node-netstring/blob/master/LICENSE"
+      "type": "BSD",
+      "url": "http://github.com/josh/node-netstring/blob/master/LICENSE"
     }
   ],
-  "main" : "./lib/ns.js",
-  "scripts" : {
-    "test" : "node test/test.js"
+  "main": "./lib/ns.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "specify": "~0.4.0"
   }
 }
